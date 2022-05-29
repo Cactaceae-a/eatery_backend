@@ -3,6 +3,8 @@ import express from 'express';
 const msRest = require("@azure/ms-rest-js");
 const Face = require("@azure/cognitiveservices-face");
 require('dotenv').config();
+const { v4: uuidv4, v4 } = require("uuid");
+uuidv4();
 
 //Database model
 import { RegisteredUsresModel } from '../../database/allModel';
@@ -79,6 +81,8 @@ async function FindSimilar() {
   let results = await client.face.findSimilar(detected_faces[0].faceId, {
     faceIds: target_face_ids,
   });
+  source_image_file_name = "";
+  target_image_file_names = [];
   return results;
 }
 // </find_similar>
@@ -86,7 +90,7 @@ async function FindSimilar() {
 
   // <snippet_loadfaces>
   var source_image_file_name = "";
-  const target_image_file_names = [];
+  var target_image_file_names = [];
 
 /**
  * Router       /image
@@ -99,6 +103,7 @@ async function FindSimilar() {
 Router.post('/', async(req, res)=>{
     try{
         var buf = Buffer.from(req.body.file.file.replace(/^data:image\/\w+;base64,/, ""),'base64');
+        // console.log(req.body)
         var data = {
           Bucket: "zomato-master-new",
           Key: Date.now() + '.jpeg', 
@@ -111,9 +116,14 @@ Router.post('/', async(req, res)=>{
       const uploadImage= await s3Upload(data);
 
       source_image_file_name = uploadImage.Location;
+      // console.log("source image"+ source_image_file_name);
       const orders =req.body.file.orders;
+      // console.log(orders)
+      // console.log(orders[0].restaurant)
       const image = await RegisteredUsresModel.find({restaurant: orders[0].restaurant});
+      // console.log("registered peeps" + image)
          image.map((e)=>{
+          //  console.log(e)
           target_image_file_names.push(e.images);
          })
 
@@ -131,15 +141,17 @@ Router.post('/', async(req, res)=>{
         
          //calling Find Similar model for detection 
          var finalResults = await FindSimilar()
+        //  console.log(finalResults.length, finalResults[0].confidence, check)
+        // finalResults.map((e)=>console.log(e));
         //checking for similar face
-         if(finalResults.length !=0 && finalResults[0].confidence > 0.5 && check){
+         if(finalResults.length !=0 && finalResults[0].confidence > 0.79 && check){
           return res.status(200).json("success");
          }
          else{
           res.status(200).json("error")
          }
     }catch(error){
-        res.status(500).json("error");
+      res.status(500).json("error");
     }
 })
 /**
@@ -165,7 +177,7 @@ Router.post('/upload', async(req, res)=>{
       const uploadImage= await s3Upload(data);
      
       const saveImageToDatabase = await RegisteredUsresModel.create({
-        restaurant: req.body.file.restaurantID,
+       restaurant: req.body.file.restaurantID,
         images: uploadImage.Location ,
       });
       return res.status(200).json(saveImageToDatabase);
