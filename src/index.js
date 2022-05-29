@@ -49,7 +49,8 @@ eatery.use("/review", Reviews);
 eatery.use("/user", User);
 eatery.use("/registeredusers", RegisteredUsres);
 
-eatery.listen(5000, ()=>{
+const PORT= process.env.PORT || 5000
+eatery.listen(PORT, ()=>{
     ConnectDB().then(()=>{
     console.log("server is running");
     }).catch((error)=>{
