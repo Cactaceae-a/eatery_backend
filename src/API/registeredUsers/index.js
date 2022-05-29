@@ -2,6 +2,7 @@
 import express from 'express';
 const msRest = require("@azure/ms-rest-js");
 const Face = require("@azure/cognitiveservices-face");
+require('dotenv').config();
 
 //Database model
 import { RegisteredUsresModel } from '../../database/allModel';
@@ -13,8 +14,8 @@ const Router = express.Router();
 //utility function
 import {s3Upload} from '../../utils/s3'
 
-var key = "16bc6b733fd54ff39bf6aad409cddf86";
-var endpoint = "https://newfaceapiinstance1.cognitiveservices.azure.com/";
+var key = process.env.KEY;
+var endpoint = process.env.ENDPOINT;
 
 // <credentials>
 const credentials = new msRest.ApiKeyCredentials({
