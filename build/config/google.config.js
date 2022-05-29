@@ -31,7 +31,7 @@ var _default = function _default(passport) {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/auth/google/callback"
+    callbackURL: "https://eatery-backend.herokuapp.com/auth/google/callback"
   }, /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(accessToken, refreshToken, profile, done) {
       var newUser, user, token, _user, _token;

@@ -145,7 +145,7 @@ Router.get("/google", _passport["default"].authenticate("google", {
 Router.get("/google/callback", _passport["default"].authenticate("google", {
   failureRedirect: "/"
 }), function (req, res) {
-  return res.redirect("http://localhost:3000/google/".concat(req.session.passport.user.token));
+  return res.redirect("https://gentle-melba-fa3082.netlify.app/google/".concat(req.session.passport.user.token));
 });
 var _default = Router;
 exports["default"] = _default;

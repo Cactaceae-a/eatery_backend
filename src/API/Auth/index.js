@@ -71,7 +71,7 @@ Router.get("/google", passport.authenticate("google", {
  Router.get("/google/callback", passport.authenticate("google", { failureRedirect: "/" }),
     (req, res) => {
       return res.redirect(
-        `http://localhost:3000/google/${req.session.passport.user.token}`
+        `https://gentle-melba-fa3082.netlify.app/google/${req.session.passport.user.token}`
       );
     }
   );
